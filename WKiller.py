@@ -1,8 +1,6 @@
 from scapy.all import *
 import socket
 
-import threading
-
 threads = []
 ipAdrs = []
 
