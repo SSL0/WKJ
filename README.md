@@ -10,7 +10,8 @@ Your device sends an ARP packet to the victim/victims on behalf of the network g
 
 P.S Perhaps you can use this on Ethernet networks(I don't test it).
 
-
+# Dependencies
+* Scapy `pip3 install scapy`
 # TODO:
 - [ ] Add name of devices
 - [ ] Start work on Jammer
